@@ -5,3 +5,5 @@ imgui.ini
 libraries/cgltf
 libraries/imguizmo
 libraries/stb
+out/
+.vs/
