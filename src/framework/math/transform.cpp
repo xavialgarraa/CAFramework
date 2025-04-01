@@ -42,19 +42,65 @@ Transform mix(const Transform& a, const Transform& b, float t)
 // M = SRT, ignore the translation: M = SR -> invert R to isolate S
 Transform mat4_to_transform(const mat4& m)
 {
-	// TODO
-	// ..
+	Transform out;
 
-	return Transform();
+	// 1. Extraer la traslación (última columna)
+	out.position = vec3(m.tx, m.ty, m.tz);
+
+	// 2. Extraer la rotación directamente usando mat4_to_quat
+	out.rotation = mat4_to_quat(m);
+
+	// 3. Extraer la escala de los vectores base después de "remover" la rotación
+	// Primero necesitamos la matriz de rotación inversa
+	quat invRot = inverse(out.rotation);
+
+	// Crear un transform temporal solo con la rotación inversa
+	Transform invTransform;
+	invTransform.rotation = invRot;
+	invTransform.scale = vec3(1, 1, 1); // Escala neutral
+
+	// Aplicar la rotación inversa a los vectores base para aislar la escala
+	vec3 right = transform_vector(invTransform, vec3(m.xx, m.xy, m.xz));
+	vec3 up = transform_vector(invTransform, vec3(m.yx, m.yy, m.yz));
+	vec3 forward = transform_vector(invTransform, vec3(m.zx, m.zy, m.zz));
+
+	// La magnitud de estos vectores desrotados nos da la escala
+	out.scale.x = sqrtf(right.x * right.x + right.y * right.y + right.z * right.z);
+	out.scale.y = sqrtf(up.x * up.x + up.y * up.y + up.z * up.z);
+	out.scale.z = sqrtf(forward.x * forward.x + forward.y * forward.y + forward.z * forward.z);
+
+	// Manejar casos donde la escala podría ser cero
+	if (fabsf(out.scale.x) < MAT4_EPSILON) out.scale.x = 0.0f;
+	if (fabsf(out.scale.y) < MAT4_EPSILON) out.scale.y = 0.0f;
+	if (fabsf(out.scale.z) < MAT4_EPSILON) out.scale.z = 0.0f;
+
+	return out;
 }
 
 // Converts a transform into a mat4
 mat4 transform_to_mat4(const Transform& t)
 {
-	// TODO
-	// ..
+	// First create scale matrix
+	mat4 scaleMat = mat4(
+		t.scale.x, 0.0f, 0.0f, 0.0f,
+		0.0f, t.scale.y, 0.0f, 0.0f,
+		0.0f, 0.0f, t.scale.z, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 
-	return mat4();
+	// Then create rotation matrix from quaternion
+	mat4 rotationMat = quat_to_mat4(t.rotation);
+
+	// Finally create translation matrix
+	mat4 translationMat = mat4(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		t.position.x, t.position.y, t.position.z, 1.0f
+	);
+
+	// Combine them in SRT order (Scale * Rotation * Translation)
+	return scaleMat * rotationMat * translationMat;
 }
 
 vec3 transform_point(const Transform& a, const vec3& b)

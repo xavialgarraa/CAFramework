@@ -271,10 +271,39 @@ quat look_rotation(const vec3& direction, const vec3& up)
 
 mat4 quat_to_mat4(const quat& q)
 {
-	// TODO
-	// ..
+	// Normalize quaternion
+	quat unit_q = normalized(q);
 
-	return mat4();
+	// Components
+	float x = unit_q.x;
+	float y = unit_q.y;
+	float z = unit_q.z;
+	float w = unit_q.w;
+
+	// Calcular los términos necesarios para la matriz
+	float x2 = x + x;
+	float y2 = y + y;
+	float z2 = z + z;
+
+	float xx = x * x2;
+	float xy = x * y2;
+	float xz = x * z2;
+
+	float yy = y * y2;
+	float yz = y * z2;
+	float zz = z * z2;
+
+	float wx = w * x2;
+	float wy = w * y2;
+	float wz = w * z2;
+
+	return mat4(
+		1.0f - (yy + zz), xy + wz, xz - wy, 0.0f,	// Column 0: X basis vector
+		xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f,	// Column 1: Y basis vector
+		xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f,	// Column 2: Z basis vector
+		0.0f, 0.0f, 0.0f, 1.0f						// Column 3: Translation (none)
+	);
+
 }
 
 quat mat4_to_quat(const mat4& m)

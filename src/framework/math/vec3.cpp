@@ -43,10 +43,9 @@ vec3 operator/(const vec3& l, float f)
 // Used to measure how similar two vectors are
 float dot(const vec3& l, const vec3& r)
 {
-	// TODO
-	// ..
+	float dot_product = (l.x * r.x) + (l.y * r.y) + (l.z * r.z);
 
-	return 0.f;
+	return dot_product;
 }
 
 // Sometimes the length can be usefull in square space to avoid doing the square root operation
@@ -134,8 +133,12 @@ vec3 cross(const vec3& l, const vec3& r)
 {
 	// TODO
 	// ..
+	vec3 cross_vector;
+	cross_vector.x = (l.y * r.z) - (r.y * l.z);
+	cross_vector.y = -((l.x * r.z) - (r.x * l.z));
+	cross_vector.z = (l.x * r.y) - (r.x * l.y);
 
-	return vec3();
+	return cross_vector;
 }
 
 /*
