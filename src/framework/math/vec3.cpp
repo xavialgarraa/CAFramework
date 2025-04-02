@@ -148,11 +148,13 @@ vec3 cross(const vec3& l, const vec3& r)
 */ 
 vec3 lerp(const vec3& s, const vec3& e, float t)
 {
-	// TODO
-	// ..
-
-	return vec3();
+	return vec3(
+		s.x + (e.x - s.x) * t,
+		s.y + (e.y - s.y) * t,
+		s.z + (e.z - s.z) * t
+	);
 }
+
 
 // Spherical linear interpolation. Interpolates on the shortest arc (if t is close to 0, it can gives unexpected results)
 vec3 slerp(const vec3& s, const vec3& e, float t)

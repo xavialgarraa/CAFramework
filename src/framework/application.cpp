@@ -8,6 +8,7 @@
 Camera* Application::camera = nullptr;
 Application* Application::instance;
 
+
 void Application::init(GLFWwindow* window)
 {
     instance = this;
@@ -22,11 +23,69 @@ void Application::init(GLFWwindow* window)
     camera->set_perspective(45.f, window_width / (float)window_height, 0.1f, 500.f);
 
     /* ADD ENTITIES TO THE SCENE */
+    /*
     Entity* example = new Entity("Example");
     example->mesh = Mesh::get("res/meshes/sphere.obj");
     example->material = new FlatMaterial();
     example->set_transform(Transform());
     entity_list.push_back(example);
+    
+    */
+
+    // Add spheres for quaternion demo
+    Entity* dot_ent = new Entity("Dot Sphere");
+    dot_ent->mesh = Mesh::get("res/meshes/sphere.obj");
+    dot_ent->material = new FlatMaterial();
+    dot_ent->set_transform(Transform(vec3(-3.f, 0.f, 0.f), quat(), vec3(1.f)));
+    entity_list.push_back(dot_ent);
+
+    Entity* cross_ent = new Entity("Cross Sphere");
+    cross_ent->mesh = Mesh::get("res/meshes/sphere.obj");
+    cross_ent->material = new NormalMaterial();
+    cross_ent->set_transform(Transform(vec3(-1.f, 0.f, 0.f), quat(), vec3(1.f)));
+    entity_list.push_back(cross_ent);
+
+    Entity* quat_ent = new Entity("Quat Sphere");
+    quat_ent->mesh = Mesh::get("res/meshes/sphere.obj");
+    quat_ent->material = new NormalMaterial();
+    quat_ent->set_transform(Transform(vec3(1.f, 0.f, 0.f), quat(), vec3(1.f)));
+    entity_list.push_back(quat_ent);
+
+    Entity* lerp_ent = new Entity("Lerp Sphere");
+    lerp_ent->mesh = Mesh::get("res/meshes/sphere.obj");
+    lerp_ent->material = new FlatMaterial();
+    lerp_ent->set_transform(Transform(vec3(3.f, 0.f, 0.f), quat(), vec3(1.f)));
+    entity_list.push_back(lerp_ent);
+
+    // Add debug lines (rendered on top)
+    LineHelper* dot_l1 = new LineHelper(vec3(-3.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
+    dot_l1->color = vec4(1.f, 0.f, 0.f, 1.f);
+    dot_l1->unlocked = false;
+    entity_list.push_back(dot_l1);
+
+    LineHelper* dot_l2 = new LineHelper(vec3(-3.f, 0.f, 0.f), vec3(0.f, 0.f, 1.f));
+    entity_list.push_back(dot_l2);
+
+    LineHelper* cross_l3 = new LineHelper(vec3(-1.f, 0.f, 0.f), vec3(0.f, 1.f, 0.f));
+    cross_l3->color = vec4(1.f, 0.f, 0.f, 1.f);
+    cross_l3->unlocked = false;
+    entity_list.push_back(cross_l3);
+
+    LineHelper* cross_l4 = new LineHelper(vec3(-1.f, 0.f, 0.f), vec3(0.f, 0.f, 1.f));
+    entity_list.push_back(cross_l4);
+
+    LineHelper* cross_l5 = new LineHelper(vec3(-1.f, 0.f, 0.f), vec3(1.f, 0.f, 0.f));
+    cross_l5->color = vec4(0.f, 1.f, 0.f, 1.f);
+    cross_l5->unlocked = false;
+    entity_list.push_back(cross_l5);
+
+    LineHelper* quat_l6 = new LineHelper(vec3(1.f, 0.f, 0.f), vec3(0.f, 0.f, 1.f));
+    quat_l6->color = vec4(1.f, 0.f, 0.f, 1.f);
+    quat_l6->unlocked = false;
+    entity_list.push_back(quat_l6);
+
+    LineHelper* quat_l7 = new LineHelper(vec3(1.f, 0.f, 0.f), vec3(0.f, 0.f, 1.f));
+    entity_list.push_back(quat_l7);
 }
 
 void Application::update(float dt)
