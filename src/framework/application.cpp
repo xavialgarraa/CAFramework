@@ -54,7 +54,7 @@ void Application::init(GLFWwindow* window)
     Entity* lerp_ent = new Entity("Lerp Sphere");
     lerp_ent->mesh = Mesh::get("res/meshes/sphere.obj");
     lerp_ent->material = new FlatMaterial();
-    lerp_ent->set_transform(Transform(vec3(3.f, 0.f, 0.f), quat(), vec3(1.f)));
+    lerp_ent->set_transform(Transform(vec3(8.f, 0.f, 0.f), quat(), vec3(1.f)));
     entity_list.push_back(lerp_ent);
 
     // Add debug lines (rendered on top)
@@ -91,8 +91,20 @@ void Application::init(GLFWwindow* window)
 void Application::update(float dt)
 {
     float curr_time = glfwGetTime();
+    float t = (sin(curr_time) + 1.0f) * 0.5f; // t oscila entre 0 y 1
 
-    // Update entities of the scene
+    vec3 start_pos(-3.f, 0.f, 0.f);
+    vec3 end_pos(3.f, 0.f, 0.f);
+
+    // Aplicar interpolación lineal a la posición de la sphere
+    for (auto& entity : entity_list) {
+        if (entity->name == "Lerp Sphere") {
+            vec3 interpolated_pos = lerp(start_pos, end_pos, t);
+            entity->set_transform(Transform(interpolated_pos, quat(), vec3(1.f)));
+        }
+    }
+
+    // Actualizar entidades de la escena
     for (unsigned int i = 0; i < entity_list.size(); i++) {
         entity_list[i]->update(dt);
     }
@@ -107,6 +119,7 @@ void Application::update(float dt)
     }
     last_mouse_position = mouse_position;
 }
+
 
 void Application::render()
 {
